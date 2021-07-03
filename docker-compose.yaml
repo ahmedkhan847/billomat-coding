@@ -1,0 +1,17 @@
+version: "3" # specify docker-compose version
+
+# Define the services/containers to be run
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./mysqldata:/var/lib/mysql"
+    environment:
+      MYSQL_USER: "root@%"
+      MYSQL_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: billomat
