@@ -14,6 +14,8 @@ export class User {
   @Column()
   age: number
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   image: string
 }

@@ -20,6 +20,12 @@ export const Routes = [
     action: "one"
   },
   {
+    method: "put",
+    route: "/users/:id",
+    controller: UserController,
+    action: "update"
+  },
+  {
     method: "post",
     route: "/users",
     controller: UserController,

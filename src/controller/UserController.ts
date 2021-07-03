@@ -1,7 +1,10 @@
 import { getRepository } from "typeorm"
 import { NextFunction, Request, Response } from "express"
 import { User } from "../entity/User"
-import { UserValidation } from "../entity/UserValidation"
+import {
+  UserCreateValidation,
+  UserUpdateValidation
+} from "../entity/UserValidation"
 import * as ResponseHelper from "../helpers/response_helpers"
 import { getManager } from "typeorm"
 
@@ -26,10 +29,32 @@ export class UserController {
     }
   }
 
+  async update(request: Request, response: Response, next: NextFunction) {
+    try {
+      const user = await this.userRepository.findOne(request.params.id)
+      if (request.file) request.body.image = request.file.path
+      const value = await UserUpdateValidation.validate(request.body, {
+        abortEarly: false
+      })
+      if (value.error)
+        return ResponseHelper.returnError(
+          ResponseHelper.extractError(value.error)
+        )
+
+      const updatedUser = await this.userRepository.save({
+        ...user,
+        ...value.value
+      })
+      return ResponseHelper.returnSuccess({ user: updatedUser })
+    } catch (error) {
+      return ResponseHelper.returnError(error)
+    }
+  }
+
   async save(request: Request, response: Response, next: NextFunction) {
     try {
       if (request.file) request.body.image = request.file.path
-      const value = await UserValidation.validate(request.body, {
+      const value = await UserCreateValidation.validate(request.body, {
         abortEarly: false
       })
       if (value.error)
